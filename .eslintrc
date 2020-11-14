@@ -24,7 +24,7 @@
       // Disabled as the "exceptions" clause does not seem to currently work
       "spaced-comment": [0],
   },
-  "plugins": {
+  "plugins": [
     "flowtype"
-  }
+  ]
 }
