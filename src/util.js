@@ -15,6 +15,19 @@ import xorshift from 'xorshift';
 import Int64 from 'node-int64';
 import os from 'os';
 import http from 'http';
+import crypto from 'crypto';
+
+// Fix non-fork-safe xorshift RNG by seeding it with CSPRNG values
+var XorShift = xorshift.constructor;
+
+function rint() {
+  let bytes = crypto.randomBytes(4)
+  let hex = bytes.toString('hex')
+  return parseInt(hex, 16)
+}
+
+var rng = new XorShift([rint(), rint(), rint(), rint()]);
+
 
 export default class Utils {
   /**
@@ -48,7 +61,7 @@ export default class Utils {
    * number.
    **/
   static getRandom64(): Buffer {
-    let randint = xorshift.randomint();
+    let randint = rng.randomint();
     let buf = this.newBuffer(8);
     buf.writeUInt32BE(randint[0], 0);
     buf.writeUInt32BE(randint[1], 4);
@@ -62,8 +75,8 @@ export default class Utils {
    * number.
    **/
   static getRandom128(): Buffer {
-    let randint1 = xorshift.randomint();
-    let randint2 = xorshift.randomint();
+    let randint1 = rng.randomint();
+    let randint2 = rng.randomint();
     let buf = this.newBuffer(16);
     buf.writeUInt32BE(randint1[0], 0);
     buf.writeUInt32BE(randint1[1], 4);
